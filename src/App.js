@@ -4,8 +4,8 @@ import AccountManagement from "./components/users/AccountManagement";
 import Home from "./components/Home";
 import AppTabBar from "./components/standard-page-parts/AppTabBar";
 import {FirebaseContext} from "./config/firebase";
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword   } from "firebase/auth";
-import { doc, getDoc, setDoc } from "firebase/firestore";
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, deleteUser   } from "firebase/auth";
+import { doc, getDoc, setDoc, deleteDoc } from "firebase/firestore";
 import {
   BrowserRouter as Router,
   Switch,
@@ -39,6 +39,7 @@ class App extends React.Component{
     this.showSignUp = this.showSignUp.bind(this);
     this.handleSignUp = this.handleSignUp.bind(this);
     this.updateUserDetails = this.updateUserDetails.bind(this);
+    this.deleteUser = this.deleteUser.bind(this);
   }
 
   // This function carries out the log in of a user to the application. 
@@ -156,6 +157,28 @@ class App extends React.Component{
 
   async deleteUser() {
     console.log("Delete function on main component called")
+    await deleteUser(this.context.auth.currentUser).then(() => {
+      const docRef = doc(this.context.database, "users", this.context.user.uid);
+      getDoc(docRef).then((docSnap) =>{
+        if (docSnap.exists()) {   
+          console.log("User documents found in Database, Deleting...");   
+          deleteDoc(docRef);
+        } else {
+          console.log("User ID not found in database, no documents to delete. This may be an error");
+        }
+      });
+
+      this.setState({user: {
+        uuid:  null,
+        name: null,
+        userEmail: null,
+        height: null,
+        weight: null
+        }})
+    }).catch((error) => {
+      console.log("An error occurred.")
+    })
+    
   }
 
   logOut() {
