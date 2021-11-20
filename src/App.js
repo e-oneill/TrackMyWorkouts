@@ -154,6 +154,10 @@ class App extends React.Component{
     
   }
 
+  async deleteUser() {
+    console.log("Delete function on main component called")
+  }
+
   logOut() {
     this.setState({user: {
       uuid:  null,
@@ -194,7 +198,7 @@ class App extends React.Component{
       
       <Switch>
         {this.state.user.uuid &&
-          <Route path="/account-management" component={() => <AccountManagement user={this.state.user} updateUserDetails={this.updateUserDetails} />}/>
+          <Route path="/account-management" component={() => <AccountManagement user={this.state.user} deleteHandler={this.deleteUser} updateUserDetails={this.updateUserDetails} />}/>
         }
           <Route exact path="" component={() => <Home user={this.state.user}/> } />
       </Switch>

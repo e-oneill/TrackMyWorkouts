@@ -151,7 +151,7 @@ class AccountManagement extends React.Component {
   }
 
   async deleteUser() {
-    
+    this.props.deleteHandler();
     this.setState({openDeleteDialog: false})
   }
 
