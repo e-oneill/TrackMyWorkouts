@@ -2,6 +2,7 @@ import "./styles.css";
 import React from "react";
 import AccountManagement from "./components/users/AccountManagement";
 import Home from "./components/Home";
+import Workout from "./components/workout/Workout";
 import AppTabBar from "./components/standard-page-parts/AppTabBar";
 import {FirebaseContext} from "./config/firebase";
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, deleteUser   } from "firebase/auth";
@@ -221,7 +222,10 @@ class App extends React.Component{
       
       <Switch>
         {this.state.user.uuid &&
+          <div>
           <Route path="/account-management" component={() => <AccountManagement user={this.state.user} deleteHandler={this.deleteUser} updateUserDetails={this.updateUserDetails} />}/>
+          <Route path="/workout" component={() => <Workout user={this.state.user} />}/>
+          </div>
         }
           <Route exact path="" component={() => <Home user={this.state.user}/> } />
       </Switch>

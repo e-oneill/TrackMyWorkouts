@@ -31,6 +31,7 @@ import Login from '../users/Login';
 import SignUp from '../users/Signup';
 import AccountManagement from "../users/AccountManagement";
 
+
 import {
   BrowserRouter as Router,
   Switch,
@@ -101,6 +102,7 @@ class AppTabBar extends React.Component {
               {(this.props.user.name) ?
               <div>
               <Link component={RouterLink} to="/"><MenuItem onClick={this.handleClose}>My Home</MenuItem></Link>
+              <Link component={RouterLink} to="/workout"><MenuItem onClick={this.handleClose}>Workout</MenuItem></Link>
               <MenuItem onClick={() => {this.props.appLogoutHandler(); this.handleAccountClose();}}>Log Out</MenuItem>
               </div>:
               <div>
@@ -143,6 +145,7 @@ class AppTabBar extends React.Component {
                 onClose={this.handleAccountClose}
               >
                 <Link component={RouterLink} to="/account-management"><MenuItem onClick={this.handleAccountClose}>Manage Account</MenuItem></Link>
+                
                 <MenuItem onClick={() => {this.props.appLogoutHandler(); this.handleAccountClose();}}>Log Out</MenuItem>
               </Menu>
              
