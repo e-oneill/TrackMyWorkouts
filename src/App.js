@@ -2,8 +2,14 @@ import "./styles.css";
 import React from "react";
 import AccountManagement from "./components/users/AccountManagement";
 import Home from "./components/Home";
+import Splash from "./components/Splash";
 import Workout from "./components/workout/Workout";
 import AppTabBar from "./components/standard-page-parts/AppTabBar";
+import CreateWorkout from "./components/creators/CreateWorkout";
+import CreateExercise from "./components/creators/CreateExercise";
+import CreationCenter from "./components/creators/CreationCenter";
+import EditExercises from "./components/creators/EditExercises";
+import EditWorkouts from "./components/creators/EditWorkouts";
 import {FirebaseContext} from "./config/firebase";
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, deleteUser   } from "firebase/auth";
 import { doc, getDoc, setDoc, deleteDoc } from "firebase/firestore";
@@ -81,6 +87,7 @@ class App extends React.Component{
         this.loginElement.current.handleSubmit();
         this.tabMenuElement.current.handleClose();
         this.setState({showLogin: false, user: {uuid:this.context.user.uid, name: data.name, height: data.height, weight: data.weight, userEmail: this.context.user.email}});
+        
         // console.log(this.state.showLogin)
         // this.setState({user:{name: docSnap.data().name}})
       } else {
@@ -113,6 +120,7 @@ class App extends React.Component{
       this.signUpElement.current.handleSignUpProcessing();
       this.tabMenuElement.current.handleClose();
       this.setState({signUp: false, user: {uuid:user.uid, name: name, userEmail: user.email}});
+      
     })
     .catch((error) => {
       let errorMessage = "Error occurred";
@@ -221,13 +229,27 @@ class App extends React.Component{
       />
       
       <Switch>
-        {this.state.user.uuid &&
-          <div>
-          <Route path="/account-management" component={() => <AccountManagement user={this.state.user} deleteHandler={this.deleteUser} updateUserDetails={this.updateUserDetails} />}/>
-          <Route path="/workout" component={() => <Workout user={this.state.user} />}/>
-          </div>
+        {this.state.user.uuid ?
+          <React.Fragment>
+            <Route path="/account-management" component={() => <AccountManagement user={this.state.user} deleteHandler={this.deleteUser} updateUserDetails={this.updateUserDetails} />}/>
+            <Route path={`/workout/:userWorkoutId`} component={() => <Workout user={this.state.user} />}/>
+            <Route exact path="/" component={() => <Home user={this.state.user}/> } />
+            <Route path ="/creation-center" component={() => <CreationCenter />} /> 
+            <Route path="/create-workout" component={() => <CreateWorkout /> } />
+            <Route path="/create-exercise" component={() => <CreateExercise /> } />
+            <Route path="/edit-exercises" component={() => <EditExercises /> } />
+            <Route path="/edit-workouts" component={() => <EditWorkouts /> } />
+          </React.Fragment>
+          :
+          <React.Fragment>
+            
+            
+            <Route exact path="/" component={() => <Splash/> } />
+            
+          </React.Fragment>
         }
-          <Route exact path="" component={() => <Home user={this.state.user}/> } />
+          
+          
       </Switch>
       </Router>
     )

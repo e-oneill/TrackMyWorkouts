@@ -1,18 +1,15 @@
 import React from "react"
-import Logout from "./users/Logout";
+// import Logout from "./users/Logout";
 
-import AppTabBar from "./standard-page-parts/AppTabBar";
-import {
-  BrowserRouter as Router,
-  Switch,
-  Route,
-  Link,
-  useRouteMatch,
-  useParams
-} from "react-router-dom";
-
-
-
+// import AppTabBar from "./standard-page-parts/AppTabBar";
+// import {
+//   BrowserRouter as Router,
+//   Switch,
+//   Route,
+//   Link,
+//   useRouteMatch,
+//   useParams
+// } from "react-router-dom";
 
 import Typography from '@mui/material/Typography';
 import Card from '@mui/material/Card';
@@ -25,23 +22,23 @@ class Home extends React.Component
     this.state = {
       user: this.props.user
     }
+
+    // console.log(this.props.user)
   }
   render() {
     return (
-      <Router>
         
       <div style={{ display:'grid', justifyContent:'center' }}>
-      {(this.state.user.name) ?
+      {(this.props.user.name) ?
         <Card sx={{width:320, maxWidth: "90vw", padding: 1, margin: 1, display:'grid', justifyContent:'center'}}>
         <Typography variant="h3">
-        Hello {this.state.user.name}!
+        Hello {this.props.user.name}!
         </Typography>
         </Card>:
         <p>You must be logged in to see this site.</p>
         }
 
       </div>
-      </Router>
     )
   }
 } 
