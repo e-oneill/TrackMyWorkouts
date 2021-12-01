@@ -7,9 +7,28 @@ import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Grid';
 import locale from 'date-fns/locale/en-IE';
 import Button from '@mui/material/Button';
-
+import Box from '@mui/material/Box';
+import Modal from '@mui/material/Modal';
+import Paper from '@mui/material/Paper';
 import {FirebaseContext} from "../../config/firebase";
 import { collection, doc, addDoc, query, where, onSnapshot, deleteDoc  } from "firebase/firestore";
+
+const smallModalStyle = {
+  position: 'absolute',
+  marginTop: 8,
+  top: '20%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: '90vw',
+  bgcolor: 'background.paper',
+  // border: '2px solid #000',
+  boxShadow: 24,
+  padding: 4,
+  display: 'flex', 
+  justifyContent: 'center', 
+  flexDirection: 'column', 
+  gap: 12
+}
 
 class CreateUserWorkout extends React.Component 
 {
@@ -24,6 +43,7 @@ class CreateUserWorkout extends React.Component
     
     this.handleChange = this.handleChange.bind(this);
     this.scheduleWorkout = this.scheduleWorkout.bind(this);
+    this.switchStartModalState = this.switchStartModalState.bind(this);
   }
 
   handleChange(newDate) {
@@ -31,6 +51,10 @@ class CreateUserWorkout extends React.Component
     this.setState({date: newDate})
 
     
+  }
+
+  switchStartModalState() {
+    this.setState({startWorkoutOpen: !this.state.startWorkoutOpen})
   }
 
   async scheduleWorkout() {
@@ -61,25 +85,33 @@ class CreateUserWorkout extends React.Component
       user: userRef,
       workout: workoutRef
     });
-    this.props.modalStateChanger();
+    this.switchStartModalState();
     console.log("User Workout added to database: " + userWorkout.id)
   }
 
   render() {
     return (
-      <div style={{display: 'flex', justifyContent: 'center', flexDirection: 'column', gap: 12}}>
-        {/* <Grid container spacing={1} >
-          <Grid item xs={12}> */}
+      <div>
+        <Button onClick={this.switchStartModalState}>
+                      Start Workout
+        </Button>
+        <Modal
+            open={this.state.startWorkoutOpen}
+            onClose={this.switchStartModalState}
+            aria-labelledby={this.props.workout.id}
+            aria-describedby={this.props.workout.name}>
+            <Box style={smallModalStyle}>
+              <Paper style={{padding: 12, display: 'flex', 
+                    justifyContent: 'center', 
+                    flexDirection: 'column', 
+                    gap: 12}}>
             <Typography variant="h4">
               Schedule Workout
             </Typography>
-          {/* </Grid>
-          <Grid item xs={12}> */}
             <Typography variant="h5">
+            
             {this.props.workout.name}
             </Typography>
-          {/* </Grid>
-          <Grid item xs={12}> */}
             <LocalizationProvider dateAdapter={AdapterDateFns} locale={locale}>
             <DateTimePicker
               label="Pick a Date and Time"
@@ -92,9 +124,9 @@ class CreateUserWorkout extends React.Component
             <Button variant="contained" color="success" onClick={this.scheduleWorkout}>
               Schedule Workout
             </Button>
-          {/* </Grid>
-          
-        </Grid> */}
+        </Paper>
+      </Box>
+      </Modal>
       </div>
     )
   }

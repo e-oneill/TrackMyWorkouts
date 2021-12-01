@@ -37,18 +37,7 @@ const modalStyle = {
   padding: 4,
 }
 
-const smallModalStyle = {
-  position: 'absolute',
-  marginTop: 8,
-  top: '20%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
-  width: '90vw',
-  bgcolor: 'background.paper',
-  // border: '2px solid #000',
-  boxShadow: 24,
-  padding: 4,
-}
+
 
 class EditWorkouts extends React.Component
 {
@@ -66,7 +55,7 @@ class EditWorkouts extends React.Component
     this.handleChangePage = this.handleChangePage.bind(this);
     this.handleChangeRowsPerPage = this.handleChangeRowsPerPage.bind(this);
     this.switchModalState = this.switchModalState.bind(this);
-    this.switchStartModalState = this.switchStartModalState.bind(this);
+    // this.switchStartModalState = this.switchStartModalState.bind(this);
   }
 
   async componentDidMount() {
@@ -83,7 +72,7 @@ class EditWorkouts extends React.Component
       // console.log("Exercises: ", exercises.join(", "));
       // if (exercises.length !== this.state.exercises.length)
       // {
-        console.log(workouts)
+        // console.log(workouts)
         this.setState({workouts: workouts})
       // }
     });
@@ -104,9 +93,7 @@ class EditWorkouts extends React.Component
     this.setState({workoutCreateOpen: !this.state.workoutCreateOpen})
   }
 
-  switchStartModalState() {
-    this.setState({startWorkoutOpen: !this.state.startWorkoutOpen})
-  }
+  
 
   render() {
     return (
@@ -131,7 +118,7 @@ class EditWorkouts extends React.Component
               </TableRow>
             </TableHead>
             <TableBody>
-            {this.state.workouts.slice(this.state.page * this.state.rowsPerPage, this.state.page * this.state.rowsPerPage + this.state.rowsPerPage).map((row) => (
+            {this.state.workouts.slice(this.state.page * this.state.rowsPerPage, this.state.page * this.state.rowsPerPage + this.state.rowsPerPage).map((row, i) => (
                 <TableRow id={row.id}>
                   <TableCell>{row.name}</TableCell>
                   <TableCell>{row.targetMuscleGroup}</TableCell>
@@ -140,20 +127,8 @@ class EditWorkouts extends React.Component
                     <EditWorkout workout={row} />
                   </TableCell>
                   <TableCell>
-                    <Button onClick={this.switchStartModalState}>
-                      Start Workout
-                    </Button>
-                    <Modal
-                     open={this.state.startWorkoutOpen}
-                     onClose={this.switchStartModalState}
-                     aria-labelledby="modal-modal-title"
-                     aria-describedby="modal-modal-description">
-                      <Box style={smallModalStyle}>
-                        <Paper style={{padding: 12}}>
                           < CreateUserWorkout workout={row} modalStateChanger={this.switchStartModalState}/>
-                        </Paper>
-                      </Box>
-                    </Modal>
+
                   </TableCell>
                 </TableRow>
               ))
