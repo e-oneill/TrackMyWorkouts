@@ -8,42 +8,42 @@ import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
 // import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
-import Button from '@mui/material/Button';
-import Paper from '@mui/material/Paper';
-import Fab from '@mui/material/Fab';
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import ListItemAvatar from '@mui/material/ListItemAvatar';
-import ListItemText from '@mui/material/ListItemText';
-import ListSubheader from '@mui/material/ListSubheader';
-import Avatar from '@mui/material/Avatar';
+// import Button from '@mui/material/Button';
+// import Paper from '@mui/material/Paper';
+// import Fab from '@mui/material/Fab';
+// import List from '@mui/material/List';
+// import ListItem from '@mui/material/ListItem';
+// import ListItemAvatar from '@mui/material/ListItemAvatar';
+// import ListItemText from '@mui/material/ListItemText';
+// import ListSubheader from '@mui/material/ListSubheader';
+// import Avatar from '@mui/material/Avatar';
 import MenuIcon from '@mui/icons-material/Menu';
-import AddIcon from '@mui/icons-material/Add';
-import SearchIcon from '@mui/icons-material/Search';
-import MoreIcon from '@mui/icons-material/MoreVert';
+// import AddIcon from '@mui/icons-material/Add';
+// import SearchIcon from '@mui/icons-material/Search';
+// import MoreIcon from '@mui/icons-material/MoreVert';
 import Link from '@mui/material/Link';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 
-import Logout from '../users/Logout';
+// import Logout from '../users/Logout';
 import Login from '../users/Login';
 import SignUp from '../users/Signup';
-import AccountManagement from "../users/AccountManagement";
+// import AccountManagement from "../users/AccountManagement";
 
 
 import {
-  BrowserRouter as Router,
-  Switch,
-  Route,
-  Link as RouterLink,
-  useRouteMatch,
-  useParams
+  // BrowserRouter as Router,
+  // Switch,
+  // Route,
+  Link as RouterLink
+  // useRouteMatch,
+  // useParams
 } from "react-router-dom";
 
-const LinkBehavior = React.forwardRef((props, ref) => (
-  <RouterLink ref={ref} to="/getting-started/installation/" {...props} />
-));
+// const LinkBehavior = React.forwardRef((props, ref) => (
+//   <RouterLink ref={ref} to="/getting-started/installation/" {...props} />
+// ));
 let loginOpen = false;
 class AppTabBar extends React.Component {
   
@@ -102,7 +102,9 @@ class AppTabBar extends React.Component {
               {(this.props.user.name) ?
               <div>
               <Link component={RouterLink} to="/"><MenuItem onClick={this.handleClose}>My Home</MenuItem></Link>
-              <Link component={RouterLink} to="/workout"><MenuItem onClick={this.handleClose}>Workout</MenuItem></Link>
+              <Link component={RouterLink} to="/workout/Z1IU9qDSjXHXbb6ZQSR0"><MenuItem onClick={this.handleClose}>Workout</MenuItem></Link>
+              <Link component={RouterLink} to="/creation-center"><MenuItem onClick={this.handleClose}>Creation Center</MenuItem></Link>
+              
               <MenuItem onClick={() => {this.props.appLogoutHandler(); this.handleAccountClose();}}>Log Out</MenuItem>
               </div>:
               <div>
@@ -145,7 +147,6 @@ class AppTabBar extends React.Component {
                 onClose={this.handleAccountClose}
               >
                 <Link component={RouterLink} to="/account-management"><MenuItem onClick={this.handleAccountClose}>Manage Account</MenuItem></Link>
-                
                 <MenuItem onClick={() => {this.props.appLogoutHandler(); this.handleAccountClose();}}>Log Out</MenuItem>
               </Menu>
              
