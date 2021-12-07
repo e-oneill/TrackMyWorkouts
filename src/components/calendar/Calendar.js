@@ -1,27 +1,24 @@
 import React, { useState } from "react";
-//import Material UI Dependancies
-import {
-  Button,
-  Modal,
-  Box,
-  Typography,
-  Paper,
-  TextField,
-  Grid,
-  Stack
-} from "@mui/material";
-import AddCircleOutlineOutlinedIcon from "@mui/icons-material/AddCircleOutlineOutlined";
+
+import AdapterDateFns from '@mui/lab/AdapterDateFns';
+import LocalizationProvider from '@mui/lab/LocalizationProvider';
 import StaticDatePicker from "@mui/lab/StaticDatePicker";
+import locale from 'date-fns/locale/en-IE';
+import DateTimePicker from '@mui/lab/DateTimePicker';
+
+import Paper from "@mui/material/Paper";
+import TextField from "@mui/material/TextField";
+import Modal from "@mui/material/Modal";
+import Box from "@mui/material/Box";
 import Fade from "@mui/material/Fade";
-
-import AdapterDateFns from "@mui/lab/AdapterDateFns";
-import LocalizationProvider from "@mui/lab/LocalizationProvider";
-import DateTimePicker from "@mui/lab/DateTimePicker";
-
+import Typography from "@mui/material/Typography";
 import Accordion from "@mui/material/Accordion";
+import Grid from "@mui/material/Grid";
 import AccordionSummary from "@mui/material/AccordionSummary";
 import AccordionDetails from "@mui/material/AccordionDetails";
-import { ExpandMoreIcon, CancelIcon } from "@mui/icons-material";
+
+import Button from "@mui/material/Button";
+
 
 const style = {
   position: "absolute",
@@ -41,33 +38,38 @@ const spreadbox = {
   alignItems: "center"
 };
 
-export default function MyCalendar({ children }) {
-  const [selectedDate, setSelectedDate] = useState(new Date());
-  const handleDateChange = (date) => {
+export default function Calendar() {
+  const [selectedDate, setSelectedDate] = useState(null);
+  const [open, setOpen] = React.useState(false);
+  const [value, setValue] = React.useState(new Date());
+
+  const minDate = new Date("2020-01-01T00:00:00.000");
+  const maxDate = new Date("2034-01-01T00:00:00.000");
+
+  function handleDateChange(date) {
     setSelectedDate(date);
     setOpen(true);
   };
 
-  const [open, setOpen] = React.useState(false);
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
+  function handleOpen() {
+    setOpen(true);
+  } 
+  
+  function handleClose() {
+    setOpen(false);
+  }
 
-  //Set the minimum and maximum date a user can select
-  const minDate = new Date("2020-01-01T00:00:00.000");
-  const maxDate = new Date("2034-01-01T00:00:00.000");
-
-  const [value, setValue] = React.useState(new Date("2020-11-28T12:00:00"));
-  const handleChange = (newValue) => {
+  function handleChange(newValue) {
     setValue(newValue);
   };
 
+  
+
   return (
-    //Static Calendar that provides view & Date&Time
-    //Initiates a modal when date clicked
-    //Allows user to schedule a workout from that day
-    <LocalizationProvider dateAdapter={AdapterDateFns}>
+    <div>
+      <LocalizationProvider dateAdapter={AdapterDateFns} locale={locale}>
       <Paper style={{ overflow: "auto" }}>
-        <StaticDatePicker
+      <StaticDatePicker
           orientation="portrait"
           openTo="day"
           minDate={minDate}
@@ -81,61 +83,60 @@ export default function MyCalendar({ children }) {
           onClose={handleClose}
           aria-labelledby="modal-modal-title"
           aria-describedby="modal-modal-description"
-          BackdropProps={{
-            timeout: 500
-          }}
         >
           <Fade in={open}>
             <Box sx={style}>
-              <Typography id="modal-modal-title" variant="h6" component="h2">
-                Workouts:
-              </Typography>
-              <Accordion>
-                <AccordionSummary
-                  expandIcon={<ExpandMoreIcon />}
-                  aria-controls="panel1a-content"
-                  id="panel1a-header"
-                >
-                  <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-                    Schedule Workout
-                  </Typography>
-                </AccordionSummary>
-
-                <Stack container spacing={0.5} item xs={12} direction="row">
-                  {children}
-                  <DateTimePicker
-                    showToolbar="False"
+            <Accordion>
+              <AccordionSummary>
+                <Typography>
+                  Select a Workout:
+                </Typography>
+              </AccordionSummary>
+              <AccordionDetails>
+                <Typography>
+                  Workout
+                </Typography>
+              </AccordionDetails>
+            </Accordion>
+            <Grid container spacing={1} style={{marginTop: '1em'}}>
+              <Grid item xs={12}>
+              <DateTimePicker
+                    
+                    showToolbar={false}
                     label="Select Date & Time"
                     value={value}
                     onChange={handleChange}
-                    renderInput={(params) => <TextField {...params} />}
+                    renderInput={(params) => <TextField fullWidth {...params} />}
                   />
-                  <Button
-                    size="Large"
-                    margin="right"
-                    onClick={handleOpen}
-                    variant="contained"
-                    startIcon={<AddCircleOutlineOutlinedIcon />}
-                  >
-                    Confirm
+              </Grid>
+              <Grid item xs={12} style={{display:'flex', gap: 8}}>
+                <Button
+                size="Large"
+                margin="right"
+                onClick={handleOpen}
+                variant="contained"
+                style={{width: '16em'}}
+                color="success">
+                  Schedule Workout
                   </Button>
-                  {children}
-                  <Button
-                    color="error"
-                    size="Large"
-                    margin="right"
-                    onClick={handleClose}
-                    variant="contained"
-                    startIcon={<AddCircleOutlineOutlinedIcon />}
-                  >
-                    Cancel
-                  </Button>
-                </Stack>
-              </Accordion>
+                <Button
+                size="Large"
+                margin="right"
+                onClick={handleClose}
+                variant="contained"
+                color="error"
+                style={{float: 'right'}}>
+                  Cancel
+                </Button>
+              </Grid>
+            </Grid>
             </Box>
           </Fade>
+          
         </Modal>
+      
       </Paper>
-    </LocalizationProvider>
-  );
+      </LocalizationProvider>
+    </div>
+  )
 }

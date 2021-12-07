@@ -6,7 +6,7 @@ import { Box, Paper, TextField } from "@mui/material";
 
 import DateAdapter from "@mui/lab/AdapterDateFns";
 
-export default function dateandtime({ children }) {
+export default function DateAndTime({ children }) {
   const [value, setValue] = React.useState(new Date("2020-11-28T12:00:00"));
 
   const handleChange = (newValue) => {

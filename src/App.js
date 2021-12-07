@@ -5,6 +5,12 @@ import Home from "./components/Home";
 import Splash from "./components/Splash";
 import MyWorkouts from "./components/MyWorkouts";
 import Workout from "./components/workout/Workout";
+import CreationCenter from "./components/creators/CreationCenter";
+import EditExercises from "./components/creators/EditExercises";
+import CreateWorkout from "./components/creators/CreateWorkout";
+import CreateExercise from "./components/creators/CreateExercise";
+import EditWorkouts from "./components/creators/EditWorkouts";
+import Calendar from "./components/calendar/Calendar";
 import AppTabBar from "./components/standard-page-parts/AppTabBar";
 import { FirebaseContext } from "./config/firebase";
 import {
@@ -244,29 +250,16 @@ class App extends React.Component {
         <Switch>
           {this.state.user.uuid ? (
             <React.Fragment>
-              <Route
-                path="/account-management"
-                component={() => (
-                  <AccountManagement
-                    user={this.state.user}
-                    deleteHandler={this.deleteUser}
-                    updateUserDetails={this.updateUserDetails}
-                  />
-                )}
-              />
-              <Route
-                path="/myworkouts"
-                component={() => <MyWorkouts user={this.state.user} />}
-              />
-              <Route
-                path={`/workout/:userWorkoutId`}
-                component={() => <Workout user={this.state.user} />}
-              />
-              <Route
-                exact
-                path="/"
-                component={() => <Home user={this.state.user} />}
-              />
+              <Route path="/account-management" component={() => ( <AccountManagement user={this.state.user} deleteHandler={this.deleteUser} updateUserDetails={this.updateUserDetails}/>)}/>
+              <Route path="/myworkouts" component={() => <MyWorkouts user={this.state.user} />} />
+              <Route path="/creation-center" component={() => <CreationCenter />} />
+              <Route path="/edit-exercises" component={() => <EditExercises />} />
+              <Route path="/edit-workouts" component={() => <EditWorkouts />} />
+              <Route path="/create-workout" component={() => <CreateWorkout />} />
+              <Route path="/create-exercise" component={() => <CreateExercise />} />
+              <Route path="/my-calendar" component={() => <Calendar />} />
+              <Route path={`/workout/:userWorkoutId`} component={() => <Workout user={this.state.user} />}/>
+              <Route exact path="/" component={() => <Home user={this.state.user} />}/>
             </React.Fragment>
           ) : (
             <React.Fragment>

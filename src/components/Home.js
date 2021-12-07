@@ -85,6 +85,7 @@ class Home extends React.Component {
               </Button>
             </CardActions>
             <CardActions>
+            <RouterLink to="/my-calendar" style={homeButton}>
               <Button
                 orientation="vertical"
                 variant="contained"
@@ -93,6 +94,7 @@ class Home extends React.Component {
               >
                 My Calendar
               </Button>
+            </RouterLink>
             </CardActions>
             <CardActions>
               <RouterLink to="/myworkouts" style={homeButton}>
