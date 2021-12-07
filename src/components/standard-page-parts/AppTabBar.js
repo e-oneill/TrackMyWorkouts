@@ -103,6 +103,7 @@ class AppTabBar extends React.Component {
               <div>
               <Link component={RouterLink} to="/"><MenuItem onClick={this.handleClose}>My Home</MenuItem></Link>
               <Link component={RouterLink} to="/workout/Z1IU9qDSjXHXbb6ZQSR0"><MenuItem onClick={this.handleClose}>Workout</MenuItem></Link>
+              <Link component={RouterLink} to="/my-calendar"><MenuItem onClick={this.handleClose}>My Calendar</MenuItem></Link>
               <Link component={RouterLink} to="/creation-center"><MenuItem onClick={this.handleClose}>Creation Center</MenuItem></Link>
               
               <MenuItem onClick={() => {this.props.appLogoutHandler(); this.handleAccountClose();}}>Log Out</MenuItem>
@@ -147,6 +148,7 @@ class AppTabBar extends React.Component {
                 onClose={this.handleAccountClose}
               >
                 <Link component={RouterLink} to="/account-management"><MenuItem onClick={this.handleAccountClose}>Manage Account</MenuItem></Link>
+                
                 <MenuItem onClick={() => {this.props.appLogoutHandler(); this.handleAccountClose();}}>Log Out</MenuItem>
               </Menu>
              
