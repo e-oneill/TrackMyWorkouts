@@ -161,6 +161,7 @@ class CreateExercise extends React.Component
                 <MenuItem value="Quads">Quads</MenuItem>
                 <MenuItem value="Hamstrings">Hamstrings</MenuItem>
                 <MenuItem value="Calves">Calves</MenuItem>
+                <MenuItem value="Glutes">Glutes</MenuItem>
             </Select>
           </FormControl>
           <FormControl sx={inputStyle} variant="outlined" required>
@@ -176,7 +177,7 @@ class CreateExercise extends React.Component
                 <MenuItem value="Compound Lift">Compound Lift</MenuItem>
                 <MenuItem value="Isolation">Isolation Exercise</MenuItem>
                 <MenuItem value="Machine">Machine</MenuItem>
-                
+                <MenuItem value="Core">Core</MenuItem>
             </Select>
           </FormControl>
           <FormControl sx={inputStyle} variant="outlined" required>
