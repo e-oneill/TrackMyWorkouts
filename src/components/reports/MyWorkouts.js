@@ -152,7 +152,7 @@ class MyWorkouts extends React.Component
 
   render() {
     return (
-      <div>
+      <div style={{width: 'fit-content', marginBottom: 66}}>
         <Accordion id="header" expanded={false} >
           <MuiAccordionSummary aria-controls="panel1d-content" id="panel1d-header">
             <Typography style={{cursor: 'default', width: 200, paddingLeft: '1.25em', marginRight: 6}}>Workout</Typography>
