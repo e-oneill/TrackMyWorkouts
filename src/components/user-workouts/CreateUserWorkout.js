@@ -13,6 +13,7 @@ import Modal from '@mui/material/Modal';
 import Paper from '@mui/material/Paper';
 import {FirebaseContext} from "../../config/firebase";
 import { collection, doc, addDoc, query, where, onSnapshot, deleteDoc  } from "firebase/firestore";
+import { Redirect } from 'react-router-dom';
 
 const smallModalStyle = {
   position: 'absolute',

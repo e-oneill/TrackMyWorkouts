@@ -19,8 +19,8 @@ import TableCell from "@material-ui/core/TableCell";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import {FirebaseContext} from "../config/firebase";
-import { collection, getDoc, query, onSnapshot  } from "firebase/firestore";
-
+import { collection, getDoc, doc, query, addDoc, onSnapshot  } from "firebase/firestore";
+import { Redirect } from 'react-router-dom';
 
 
 const inputStyle = {
@@ -33,12 +33,18 @@ class MyAccordion extends React.Component {
   static contextType = FirebaseContext;
   constructor(props) {
     super(props);
-    
+    let date = new Date();
+    let dateString = "";
+    dateString = date.getFullYear() + " " +  (date.getMonth()+1) + " " + date.getDate();
     this.state = {
+      date: date,
+      dateString: dateString,
       user: this.props.user,
-      exercises: this.props.workout.exercises
+      exercises: this.props.workout.exercises,
+      redirect: false,
+      userWorkout: ""
     };
-    
+    this.scheduleWorkout = this.scheduleWorkout.bind(this);
   }
   
   async componentDidMount() {
@@ -72,11 +78,46 @@ class MyAccordion extends React.Component {
       )
   }
 
+  async scheduleWorkout() {
+    const exercises = this.props.workout.exercises
+    const workoutRef = doc(this.context.database, "workouts", this.props.workout.id);
+    const userRef = doc(this.context.database, "users", this.context.user.uid)
+    
+    exercises.forEach(exercise => {
+      const sets = [];
+      for (let i = 0; i < this.props.workout.sets; i++)
+      {
+        let set = {}
+        set.reps = exercise.reps
+        set.weight = 0
+        sets.push(set)
+      }
+      exercise.sets = sets;
+    })
+
+    // console.log(workoutRef)
+    // console.log(userRef)
+    // console.log(exercises)
+
+    const userWorkout = await addDoc(collection(this.context.database, "user-workouts"), {
+      completed: false,
+      date: this.state.date,
+      dateString: this.state.dateString,
+      exercises: exercises,
+      user: userRef,
+      workout: workoutRef
+    });
+    
+    console.log("User Workout added to database: " + userWorkout.id)
+    this.setState({redirect: true, userWorkout: userWorkout.id})
+  }
+
 
   
   render() {
     return (
       <Accordion id={this.props.workout.id}>
+          {(this.state.redirect) && <Redirect push to={`workout/${this.state.userWorkout}`} />}
             <AccordionSummary
               aria-controls="panel2a-content"
               id="panel2a-header"
@@ -116,7 +157,9 @@ class MyAccordion extends React.Component {
             </AccordionSummary>
             <AccordionDetails>
             
-            <Button size="small" variant="contained" style={{margin: 2}}>Start Workout</Button>
+            <Button size="small" variant="contained" style={{margin: 2}} onClick={this.scheduleWorkout}>
+              Start this workout
+            </Button>
               <Typography sx={{ fontSize: 15 }}>
                 Sets: {this.props.workout.sets} Reps: {this.props.workout.exercises[0].reps}
               </Typography>
