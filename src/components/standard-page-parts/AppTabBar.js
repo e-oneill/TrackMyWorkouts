@@ -3,7 +3,9 @@ import React from 'react';
 // import { styled } from '@mui/material/styles';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
-
+import HomeIcon from '@mui/icons-material/Home';
+import FitnessCenterIcon from '@mui/icons-material/FitnessCenter';
+import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 // import CssBaseline from '@mui/material/CssBaseline';
 import Toolbar from '@mui/material/Toolbar';
 // import Typography from '@mui/material/Typography';
@@ -102,7 +104,7 @@ class AppTabBar extends React.Component {
               {(this.props.user.name) ?
               <div>
               <Link component={RouterLink} to="/"><MenuItem onClick={this.handleClose}>My Home</MenuItem></Link>
-              <Link component={RouterLink} to="/workout/Z1IU9qDSjXHXbb6ZQSR0"><MenuItem onClick={this.handleClose}>Workout</MenuItem></Link>
+              {/* <Link component={RouterLink} to="/workout/Z1IU9qDSjXHXbb6ZQSR0"><MenuItem onClick={this.handleClose}>Workout</MenuItem></Link> */}
               <Link component={RouterLink} to="/my-calendar"><MenuItem onClick={this.handleClose}>My Calendar</MenuItem></Link>
               <Link component={RouterLink} to="/creation-center"><MenuItem onClick={this.handleClose}>Creation Center</MenuItem></Link>
               
@@ -125,12 +127,29 @@ class AppTabBar extends React.Component {
                     ref = {this.props.signUpRef}/>
               </div>}
           </Menu>
-          
-          <Box sx={{ flexGrow: 1 }} />
-          
-          {/* We use  */}
           {(this.props.user.name !== null) ? 
-           <div>
+           <div style={{ paddingTop: 6, flexGrow: 1 , display: 'flex'}}>
+          <Box sx={{ flexGrow: 1 , display: 'flex', justifyContent: 'space-around'}} >
+          
+          <RouterLink to="/create-custom-workout" color="white">
+          <IconButton style={{color: "white"}}>
+          <FitnessCenterIcon />
+          </IconButton>
+          </RouterLink>     
+          <RouterLink to="/" color="white">
+          <IconButton style={{color: "white"}}>
+          <HomeIcon />
+          </IconButton>
+          </RouterLink>
+          <RouterLink to="/my-calendar" color="white">
+          <IconButton style={{color: "white"}}>
+          <CalendarTodayIcon />
+          </IconButton>
+          </RouterLink>
+          </Box>
+
+          {/* We use  */}
+          
               <IconButton
                 size="large"
                 aria-label="account of current user"

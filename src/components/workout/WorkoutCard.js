@@ -9,6 +9,12 @@ import Accordion from '@mui/material/Accordion';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
 
+
+
+import Grid from '@mui/material/Grid';
+
+
+
 const cardStyle = {
   // display: 'grid',
   // justifyContent: 'center',
@@ -26,18 +32,21 @@ const setHeader = {
 
 const exerciseInput = {
   m: 1, 
-  width: '30%',
+  // width: '30%',
   backgroundColor: 'white'
 }
 
 const exerciseButton = {
-  display: 'inline-flex',
-  m: 1,
-  width: '10%',
+  display: 'flex',
+  margin: 1,
+  
+  width: '97.5%',
   height: '1.4375em',
   padding: '16.5px 14px',
   fontSize: '1rem'
 }
+
+
 
 class Exercise extends React.Component {
   constructor(props)
@@ -49,22 +58,24 @@ class Exercise extends React.Component {
     if (this.props.set === this.props.currSet && this.props.currExercise === this.props.details.name)
     {
       currSet = false;
-      // console.log(this.props)
+      
     }
 
     this.state = {
       currSet: currSet,
-      weight: "",
+      weight: this.props.details.weight,
       reps: this.props.details.reps,
       overrideWorkoutSet: false
     }
 
     
-
+    // console.log(this.props)
     this.handleTextChange = this.handleTextChange.bind(this);
     this.handleDoubleClick = this.handleDoubleClick.bind(this);
     this.handleBlur = this.handleBlur.bind(this);
   }
+
+  
 
   handleTextChange(e) 
   {
@@ -117,8 +128,8 @@ class Exercise extends React.Component {
     const blurFunction = (this.state.overrideWorkoutSet) ? () => {this.props.saveExercise(this.props.details, this.props.set, this.props.exerciseIndex); this.handleBlur()} : null;
     return (
       
-      <div id={this.state.Exercise + "-" + this.props.set} onBlur={blurFunction} onDoubleClick={this.handleDoubleClick} style={{display:'flex', alignItems: 'center'}}>
-         
+      <Grid item xs={12} id={this.state.Exercise + "-" + this.props.set} onBlur={blurFunction} onDoubleClick={this.handleDoubleClick} style={{display:'flex', alignItems: 'center', flexDirection: 'column'}}>
+         <Grid container spacing={1} style={{width: '100%', display: 'flex', flexDirection: 'row'}}>
           {/* {(this.state.currSet) &&
               <div id={this.props.details.name+"-"+this.props.set} 
               style={{
@@ -134,18 +145,21 @@ class Exercise extends React.Component {
 
                       </div>
           } */}
-          <FormControl  sx={exerciseInput} style={{width: '50%'}} variant="outlined">
+          <Grid item xs={8}>
+          <FormControl fullWidth sx={exerciseInput}  variant="outlined">
           <InputLabel htmlFor="outlined-email">Weight (kg)</InputLabel>
           <OutlinedInput
             id="outlined-weight"
             type="number"
-            value={this.state.weight}
+            value={this.props.details.weight}
             onChange={this.handleTextChange}
             label="Weight (KG)"
             disabled={this.state.currSet}
           />
           </FormControl>
-          <FormControl sx={exerciseInput} variant="outlined">
+          </Grid>
+          <Grid item xs={4}>
+          <FormControl sx={exerciseInput}  variant="outlined">
           <InputLabel htmlFor="outlined-email">Reps</InputLabel>
           <OutlinedInput
             id="outlined-reps"
@@ -154,14 +168,20 @@ class Exercise extends React.Component {
             onChange={this.handleTextChange}
             label="Reps"
             disabled={this.state.currSet}
+            
           />
           </FormControl>
+          </Grid>
+          </Grid>
+          
           {(!this.state.currSet && !this.state.overrideWorkoutSet ) && 
-          <Button variant="contained" onClick={() => {this.props.saveExercise(this.props.details, this.props.set, this.props.exerciseIndex)}} style={exerciseButton}>
-            Save
+          // <div>
+          <Button disabled={(this.state.weight > 0 || this.props.details.weight) ? false : true} variant="contained"  onClick={() => {this.props.saveExercise(this.props.details, this.props.set, this.props.exerciseIndex)}} style={exerciseButton}>
+            Save Set
           </Button>
+          // </div>
 }
-        </div>
+        </Grid>
     )
   }
 }
@@ -170,11 +190,14 @@ function Sets(props) {
   var set = [];
   for (let i = 0; i < props.sets; i++)
   {
-    set.push(<Exercise currExercise={props.currExercise} exerciseIndex={props.exerciseIndex} saveExercise={props.saveExercise} set={i+1} currSet={props.currSet} details={props.details}/>);
+    set.push(<Grid item xs={12}><Exercise currExercise={props.currExercise} exerciseIndex={props.exerciseIndex} saveExercise={props.saveExercise} set={i+1} currSet={props.currSet} details={props.details}/></Grid>);
   }
 
   return <Card style={cardStyle}>
+          <Grid item xs={12}>
           <Typography style={setHeader}>{props.details.name}</Typography>
+          </Grid>
+          <Grid item xs={12}>
           <Accordion  sx={{ m: 1, width: 'auto' , "&&expanded" : {
           margin: 1,
           
@@ -197,7 +220,10 @@ function Sets(props) {
               
             </AccordionDetails>
           </Accordion>
+          </Grid>
+          
           {set}
+          
           </Card>;
 }
 
@@ -205,16 +231,21 @@ class WorkoutCard extends React.Component {
   // constructor(props)
   // {
   //   super(props);
-
-  //   // this.populateSets = this.populateSets.bind(this);
+    
   // }
+
+  
   
   render() {
     // console.log(this.props.details);
     return (
-      <div>
+      <Grid container>
+        <Grid item xs={12}>
+        
         {<Sets currExercise={this.props.currExercise} exerciseIndex={this.props.exerciseIndex} saveExercise={this.props.saveExercise} currSet={this.props.currSet} details={this.props.details} sets={this.props.sets} />}
-      </div>
+        </Grid>
+        
+      </Grid>
     )
   }
 }

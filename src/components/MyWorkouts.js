@@ -34,6 +34,7 @@ const inputStyle = {
   width: "40vw"
 };
 
+
 const modalStyle = {
   position: 'absolute',
   marginTop: 8,
@@ -49,8 +50,9 @@ const modalStyle = {
   // overflowY: 'auto'
 }
 
-class MyWorkouts extends React.Component {
+class Workouts extends React.Component {
   static contextType = FirebaseContext;
+
   constructor(props) {
     super(props);
     this.state = {
@@ -227,4 +229,4 @@ class MyWorkouts extends React.Component {
   }
 }
 
-export default MyWorkouts;
+export default Workouts;

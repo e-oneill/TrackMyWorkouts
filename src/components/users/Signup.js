@@ -133,7 +133,11 @@ class SignUp extends React.Component {
 
   handleModalStateChange() {
     this.setState({open: !this.state.open})
-    this.props.closeMenu();
+    if (!this.props.splash)
+    {
+      this.props.closeMenu();
+    }
+    
   }
 
   handlePasswordChange(e) {
@@ -169,7 +173,7 @@ class SignUp extends React.Component {
     const signUpSubmit = this.props.signUpSubmit;
     return (
       <div style={{ display:'flex', justifyContent:'center' }}>
-        <Button color="success" variant="contained" sx={{margin: 1}} onClick={this.openModal}>
+        <Button color="success" variant="contained" sx={{margin: 1, width: '7em'}} onClick={this.openModal}>
         Sign Up
         </Button>
         <Modal 
