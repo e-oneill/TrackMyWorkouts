@@ -60,12 +60,20 @@ class Exercise extends React.Component {
       currSet = false;
       
     }
+    let shrink = true
+    
+    if (this.props.details.weight === undefined || this.props.details.weight === 0)
+    {
+      shrink = false
+    }
+    
 
     this.state = {
       currSet: currSet,
       weight: this.props.details.weight,
       reps: this.props.details.reps,
-      overrideWorkoutSet: false
+      overrideWorkoutSet: false,
+      shrink: shrink
     }
 
     
@@ -73,6 +81,8 @@ class Exercise extends React.Component {
     this.handleTextChange = this.handleTextChange.bind(this);
     this.handleDoubleClick = this.handleDoubleClick.bind(this);
     this.handleBlur = this.handleBlur.bind(this);
+    this.shrinkInput = this.shrinkInput.bind(this);
+    this.expandInput = this.expandInput.bind(this);
   }
 
   
@@ -107,8 +117,11 @@ class Exercise extends React.Component {
     }
   }
 
-  componentDidUpdate() {
+  componentDidUpdate(prevProps, prevState) {
     // console.log(this.state.currSet);
+    //This If statement checks whether this is the current exercise for the current set
+    //This controls whether the input is enabled
+    //The boolean is somewhat reversed: false means it's not the current set
     if (this.props.currSet === this.props.set && this.state.currSet 
       && this.props.currExercise === this.props.details.name
       )
@@ -121,8 +134,26 @@ class Exercise extends React.Component {
     {
       this.setState({currSet: true})
     }
+    
+    if (this.props.currExercise === this.props.details.name && this.props.details.weight !== undefined && prevState.weight === undefined)
+    {
+      // console.log("Component Updated and " + prevProps.details.weight + " and " + prevState.weight)
+      this.setState({weight: this.props.details.weight, shrink: true})
+    }
   }
 
+  //These functions manually handle the shrinking and expansion of the input label
+  //We have to do this manually because the state being set doesn't caused the input shrink to change.
+  shrinkInput() {
+    this.setState({shrink: true})
+  }
+
+  expandInput(e){
+    if (e.target.value === "")
+    {
+      this.setState({shrink:false})
+    }
+  }
 
   render() {
     const blurFunction = (this.state.overrideWorkoutSet) ? () => {this.props.saveExercise(this.props.details, this.props.set, this.props.exerciseIndex); this.handleBlur()} : null;
@@ -147,13 +178,16 @@ class Exercise extends React.Component {
           } */}
           <Grid item xs={8}>
           <FormControl fullWidth sx={exerciseInput}  variant="outlined">
-          <InputLabel htmlFor="outlined-email">Weight (kg)</InputLabel>
+          <InputLabel shrink={this.state.shrink} htmlFor="outlined-weight">Weight (kg)</InputLabel>
           <OutlinedInput
             id="outlined-weight"
             type="number"
-            value={this.props.details.weight}
+            onClick={this.shrinkInput}
+            onBlur={this.expandInput}
+            value={this.state.weight}
             onChange={this.handleTextChange}
             label="Weight (KG)"
+            
             disabled={this.state.currSet}
           />
           </FormControl>
@@ -209,10 +243,13 @@ function Sets(props) {
               </Typography>
             </AccordionSummary>
             <AccordionDetails style={{display:'grid', alignItems:'center'}}>
-              <img src={props.details.img} alt={props.details.name} style={{width:'100%', height: '100%'}} />
+              {/* <img src={props.details.img} alt={props.details.name} style={{width:'100%', height: '100%'}} /> */}
               <Typography style={{marginBottom: 12}}>
-                Target Muscle: {props.details.dominantMuscle} <br />
+                <b>Target Muscle:</b> {props.details.dominantMuscle} <br />
                 {/* Tips: {props.details.cues} */}
+              </Typography>
+              <Typography style={{marginBottom: 12}}>
+                <b>Exercise Guide:</b> {props.details.exerciseGuide}
               </Typography>
               <Button variant="contained" color="success">
                 See More

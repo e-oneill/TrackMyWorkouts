@@ -23,16 +23,12 @@ import Button from "@mui/material/Button";
 import DeleteIcon from "@mui/icons-material/Delete";
 import CheckIcon from "@mui/icons-material/Check";
 
+//React-Router-Dom
+import { Link as RouterLink } from "react-router-dom";
+
 //Firebase Details
 import { FirebaseContext } from "../../config/firebase";
-import {
-  collection,
-  query,
-  onSnapshot,
-  doc,
-  addDoc,
-  where
-} from "firebase/firestore";
+import { collection, query, onSnapshot, doc, addDoc, getDoc, where, deleteDoc } from "firebase/firestore";
 
 const style = {
   position: "absolute",
@@ -48,14 +44,16 @@ const style = {
 };
 
 const style2 = {
+  display: 'grid',
   justifyContent: "center",
-  minWidth: "80vw",
-  maxWidth: "80vw",
-  transform: "translate(-50%, -50%)",
-  bgcolor: "background.paper",
-  border: "12px solid #000",
-  boxShadow: 6000,
-  p: 4
+  // marginLeft: 'auto'
+  // minWidth: "80vw",
+  // maxWidth: "80vw",
+  // transform: "translate(-50%, -50%)",
+  // bgcolor: "background.paper",
+  // border: "12px solid #000",
+  // boxShadow: 6000,
+  // p: 4
 };
 
 class Calendar extends React.Component {
@@ -92,8 +90,8 @@ class Calendar extends React.Component {
       (newDate.getMonth() + 1) +
       " " +
       newDate.getDate();
-    this.setState({ date: newDate, dateString: dateString });
-    this.getUserWorkouts();
+    this.setState({ date: newDate, dateString: dateString }, () => this.getUserWorkouts() );
+    
     // this.switchStartModalState();
   }
 
@@ -117,36 +115,42 @@ class Calendar extends React.Component {
     this.setState({ scheduleWorkoutModal: !this.state.scheduleWorkout });
   }
 
-  //Method for verifying conditional rendering.
-
-  isWorkoutDay() {
-    return this.state.dateString === this.state.workouts;
-  }
 
   //Firebase Pull to get User Information
 
+  //This function is called when the date is changed. It carries out a database pull.
+  //The snapshot is created so that the record of workouts is live and real time
+  //If the query returns null, we set the state to an empty array.
   async getUserWorkouts() {
-    console.log("Function called");
+    // console.log("Function called. Date: " + this.state.dateString );
     const userRef = doc(this.context.database, "users", this.context.user.uid);
     const q2 = query(
       collection(this.context.database, "user-workouts"),
       where("user", "==", userRef),
       where("dateString", "==", this.state.dateString)
     );
-    const unsubscribe2 = onSnapshot(q2, (querySnapshot) => {
+    // this.setState({userWorkouts: []})
+    const unsubscribe2 = onSnapshot(q2,  (querySnapshot) => {
       const userWorkouts = [];
-      querySnapshot.forEach((doc) => {
+      // console.log(querySnapshot);
+      querySnapshot.forEach( async (doc) => {
         let data = doc.data();
         data.id = doc.id;
-
+        
+        // const workoutRef = doc(this.context.database, "workouts", data.workout)
+        const workoutSnap = await getDoc(data.workout)
+        const workout = workoutSnap.data();
+        // console.log(workout);
+        data.name = workout.name
+        data.targetMuscleGroup = workout.targetMuscleGroup
         userWorkouts.push(data);
+        this.setState({ userWorkouts: userWorkouts }
+          // , () =>     console.log(this.state.userWorkouts)
+          );
       });
-      // console.log("Exercises: ", exercises.join(", "));
-      console.log(userWorkouts);
-      this.setState({ userWorkouts: userWorkouts }, () =>
-        console.log(this.state.userWorkouts)
-      );
-    });
+
+      
+    }, this.setState({userWorkouts: []}));
   }
 
   async componentDidMount() {
@@ -157,7 +161,7 @@ class Calendar extends React.Component {
       querySnapshot.forEach((doc) => {
         let data = doc.data();
         data.id = doc.id;
-
+        
         workouts.push(data);
       });
       // console.log("Exercises: ", exercises.join(", "));
@@ -207,16 +211,23 @@ class Calendar extends React.Component {
     // console.log(exercises)
   }
 
+  async deleteWorkout(id) {
+    // console.log(id)
+    const docRef = doc(this.context.database, "user-workouts", id)
+    await deleteDoc(docRef);
+    this.getUserWorkouts();
+  }
+
   render() {
     return (
       // Div for Entire Page
-      <div style={{ display: "grid", justifyContent: "center" }}>
+      <div style={{ display: "grid", justifyContent: "center", marginBottom: 66 }}>
         {/* // Card For Entire Page */}
         <Card
           sx={{
             // width: 320,
             maxWidth: "90vw",
-            padding: 1,
+            // padding: 1,
             margin: 1,
             display: "grid",
             justifyContent: "center"
@@ -308,32 +319,54 @@ class Calendar extends React.Component {
           </LocalizationProvider>
 
           {/* Conditional Rendering section to display User Workouts on a certain day: */}
-          <div>
-            <Card
+          
+            
+              <div className="WorkoutInfo" style={style2}>
+              <Card
               sx={{
-                width: 320,
-                maxWidth: "90vw",
-                padding: 1,
-                margin: 1,
-                display: "grid",
-                justifyContent: "center"
+                    width: 480,
+                    // minWidth: '87%',
+                    maxWidth: "75vw",
+                    padding: 1,
+                    margin: 1,
+                    display: "grid",
+                    justifyContent: "center"
               }}
             >
-              <div className="WorkoutInfo" sx={style2}>
-                {this.isWorkoutDay() && (
-                  <Typography variant="button" display="block" gutterBottom>
-                    Workout Booked
+                {(this.state.userWorkouts.length > 0) && (
+                  <div>
+                  <Typography variant="button" style={{fontWeight: 750}}gutterBottom>
+                    {(this.state.userWorkouts.length > 1)
+                    ? "Workouts" : "Workout"}
+                    
                   </Typography>
+                  {this.state.userWorkouts.map((workout) => (
+                    <div id={workout.id} style={{maxWidth: '80vw', marginBottom: 4, display:'flex', gap: 4, alignItems: 'center'}}>
+                      <Typography variant="button" >
+                        {workout.name}
+                      </Typography>
+                      <RouterLink to={`workout/${workout.id}`} color="white">
+                      <Button size="small" variant="contained" color="success">
+                        Start
+                      </Button>
+                      </RouterLink>
+                      <Button size="small" variant="contained" color="error" onClick={() => this.deleteWorkout(workout.id)}>
+                        Delete
+                      </Button>
+                    </div>
+                    ))}
+                  </div>
                 )}
 
-                {!this.isWorkoutDay() && (
+                {(!this.state.userWorkouts.length > 0) && (
                   <Typography variant="button" display="block" gutterBottom>
                     No Workouts Booked
                   </Typography>
                 )}
-              </div>
-            </Card>
-          </div>
+              
+              </Card>
+            </div>
+          <div style={{display: 'grid', justifyItems: 'center'}}>
           {/* A button is required to schedule workouts.  */}
           <Button
             color="success"
@@ -341,9 +374,11 @@ class Calendar extends React.Component {
             onClick={this.switchStartModalState}
             sx={{
               width: 500,
-              maxWidth: "90vw",
+              maxWidth: "80vw",
+              
               padding: 1,
               margin: 1,
+              // marginLeft: "3vw",
               display: "grid",
               justifyContent: "center",
               p: 1
@@ -351,6 +386,7 @@ class Calendar extends React.Component {
           >
             Schedule Workout
           </Button>
+          </div>
         </Card>
       </div>
     );
