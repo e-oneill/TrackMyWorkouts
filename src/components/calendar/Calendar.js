@@ -345,11 +345,17 @@ class Calendar extends React.Component {
                       <Typography variant="button" >
                         {workout.name}
                       </Typography>
+                      
+                      {(!workout.completed) &&
                       <RouterLink to={`workout/${workout.id}`} color="white">
                       <Button size="small" variant="contained" color="success">
                         Start
                       </Button>
                       </RouterLink>
+                      
+                    }
+                      
+                      
                       <Button size="small" variant="contained" color="error" onClick={() => this.deleteWorkout(workout.id)}>
                         Delete
                       </Button>

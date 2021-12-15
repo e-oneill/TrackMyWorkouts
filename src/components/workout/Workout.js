@@ -11,6 +11,7 @@ import Button from '@mui/material/Button';
 import Modal from '@mui/material/Modal';
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
+import { Redirect } from 'react-router-dom';
 
 const timerBox = {
   position: 'absolute',
@@ -37,7 +38,7 @@ export default function Workout(props) {
     const [currExercise, setCurrExercise] = useState(0);
     const [exercise, setExercise] = useState("");
     const [timer, setTimer] = useState(false);
-
+    const [redirect, setRedirect] = useState(false);
 
     // let loadCompleted = false;
     let loadInProgress = useRef(false);
@@ -102,7 +103,7 @@ export default function Workout(props) {
 
         // console.log(docRef);
       }
-      console.log(newExercisesArr);
+      // console.log(newExercisesArr);
       setExercisesArr(newExercisesArr);
       setExercise(newExercisesArr[currExercise].name);
       
@@ -162,9 +163,10 @@ export default function Workout(props) {
 
     async function finishWorkout() {
       userWorkout.completed = true;
-      console.log(userWorkout);
+      // console.log(userWorkout);
 
-      updateDoc(userWorkoutRef, userWorkout)
+      await updateDoc(userWorkoutRef, userWorkout)
+      setRedirect(true)
     }
     
     function startTimer() {
@@ -173,6 +175,7 @@ export default function Workout(props) {
     
     return(
       <div style={{display: 'flex', justifyContent: 'center', marginBottom: '70px'}}>
+        {(redirect) && <Redirect push to="/my-workouts" />}
         {(workout && exercisesArr.length > 0) ? 
         <div style={{display: 'grid', justifyContent: 'center'}}>
           <Typography variant="h5" style={{display: 'flex', justifyContent: 'center'}}>
