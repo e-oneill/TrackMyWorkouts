@@ -9,7 +9,8 @@ import {
 } from "react-router-dom";
 
 const gridStyle = {
-  height: 200,
+  height: 150,
+  marginBottom: 12
 }
 
 const cardPaper = {

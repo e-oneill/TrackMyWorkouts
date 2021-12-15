@@ -8,45 +8,141 @@ import TextField from "@mui/material/TextField";
 import Accordion from "@mui/material/Accordion";
 import AccordionSummary from "@mui/material/AccordionSummary";
 import AccordionDetails from "@mui/material/AccordionDetails";
-import { withStyles } from "@material-ui/core/styles";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import Divider from "@material-ui/core/Divider";
 import FormControl from "@mui/material/FormControl";
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
-import { Workout1Array } from "/src/components/Workout1.js";
+import Grid from '@mui/material/Grid';
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
-const localWorkout1Array = Workout1Array;
+import Modal from '@mui/material/Modal';
+import Box from '@mui/material/Box';
+import Paper from '@mui/material/Paper';
+import {FirebaseContext} from "../config/firebase";
+import { collection, query, onSnapshot  } from "firebase/firestore";
+
+
+import MyAccordion from "./accordion"
 
 const inputStyle = {
   backgroundColor: "white",
   marginBottom: ".5em",
-  width: "50vw"
+  width: "40vw"
 };
 
-class MyWorkouts extends React.Component {
+
+const modalStyle = {
+  position: 'absolute',
+  marginTop: 8,
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: '90vw',
+  bgcolor: 'background.paper',
+  // border: '2px solid #000',
+  boxShadow: 24,
+  padding: 4,
+  overflow: 'scroll',
+  // overflowY: 'auto'
+}
+
+class Workouts extends React.Component {
+  static contextType = FirebaseContext;
+
   constructor(props) {
     super(props);
     this.state = {
       user: this.props.user,
-      wArray: localWorkout1Array,
-      searchTerm: ""
+      search: "",
+      muscleGroup: "",
+      workouts: [],
+      startWorkoutOpen: false
     };
-    this.onChangeSearchBox = this.onChangeSearchBox.bind(this);
+    this.handleSearchBoxChange = this.handleSearchBoxChange.bind(this)
+    this.handleMuscleGroupChange = this.handleMuscleGroupChange.bind(this)
+    this.switchModalState = this.switchModalState.bind(this);
     // console.log(this.props.user)
   }
 
-  onChangeSearchBox(event) {
-    this.setState({ searchTerm: event.target.value });
+  async componentDidMount() {
+    this.setState({creator: this.context.user.uid})
+    const q = query(collection(this.context.database, "workouts"));
+    const unsubscribe = onSnapshot(q, (querySnapshot) => {
+      const workouts = [];
+      querySnapshot.forEach((doc) => {
+          let data = doc.data();
+          data.id = doc.id;
+          
+          workouts.push(data);
+      });
+      // console.log("Exercises: ", exercises.join(", "));
+      // if (exercises.length !== this.state.exercises.length)
+      // {
+        console.log(workouts)
+        this.setState({workouts: workouts})
+      // }
+    });
+    
   }
+  handleMuscleGroupChange(e) {
+    this.setState({muscleGroup: e.target.value})
+  }
+
+  
+  handleSearchBoxChange(e) {
+    if (e.target.id === "search")
+    {
+      this.setState({search: e.target.value})
+    }
+  }
+
+  filterByMuscleGroup(muscleGroup) {
+    return function (workout) {
+      if (muscleGroup !== "")
+      {
+        return workout.targetMuscleGroup === muscleGroup
+      }
+      else
+      {
+        return true;
+      }
+    }
+  }
+
+  
+
+
+  filterBySearch(search)
+  {
+    return function (workout) {
+      if (search !== "")
+      {
+        return (
+          workout.name.toLowerCase().includes(search.toLowerCase()) ||
+          workout.targetMuscleGroup.toLowerCase().includes(search.toLowerCase())
+          
+        )
+      }
+      else return true;
+    }
+  }
+
+  handleChangePage(event, newPage) {
+    this.setState({page: newPage})
+  }
+
+
+  switchModalState() {
+    this.setState({workoutCreateOpen: !this.state.workoutCreateOpen})
+  }
+  
   render() {
     return (
-      <div style={{ display: "grid", justifyContent: "center", width: "100%" }}>
+      <div style={{ display: "grid", justifyContent: "center", marginBottom: 66, width: "100%" }}>
         <Card
           sx={{
             width: 600,
@@ -57,14 +153,21 @@ class MyWorkouts extends React.Component {
             justifyContent: "center"
           }}
         >
-          <Typography variant="h3">My Workouts</Typography>
+          {/* <Typography  variant="h5">
+        My Workouts  
+        </Typography> */}
+        <Grid container spacing={2}>
+        <Grid item xs={6}>
           <TextField
-            sx={inputStyle}
-            id="outlined-search"
+            fullWidth
+            id="search"
             label="Search Workouts"
             type="search"
+            onChange={this.handleSearchBoxChange}
           />
-          <FormControl sx={inputStyle} variant="outlined" required>
+          </Grid>
+          <Grid item xs={6}>
+          <FormControl fullWidth variant="outlined" required>
             <InputLabel htmlFor="outlined-adornment-password">
               Target Muscle Group
             </InputLabel>
@@ -75,206 +178,55 @@ class MyWorkouts extends React.Component {
               label="Target Muscle Group"
               onChange={this.handleMuscleGroupChange}
             >
-              <MenuItem value="Full Body">Full Body</MenuItem>
-              <MenuItem value="Chest">Chest</MenuItem>
-              <MenuItem value="Shoulders">Shoulders</MenuItem>
-              <MenuItem value="Back">Back</MenuItem>
-              <MenuItem value="Arms">Arms</MenuItem>
-              <MenuItem value="Core">Core</MenuItem>
-              <MenuItem value="Legs">Legs</MenuItem>
+               <MenuItem value="">All</MenuItem>
+                <MenuItem value="Full Body">Full Body</MenuItem>
+                <MenuItem value="Chest">Chest</MenuItem>
+                <MenuItem value="Shoulders">Shoulders</MenuItem>
+                <MenuItem value="Back">Back</MenuItem>
+                <MenuItem value="Arms">Arms</MenuItem>
+                <MenuItem value="Core">Core</MenuItem>
+                <MenuItem value="Legs">Legs</MenuItem>
             </Select>
           </FormControl>
-          <Accordion>
+          </Grid>
+          
+          <Grid item xs={12}>
+          <Accordion disabled
+          
+          >
             <AccordionSummary
               aria-controls="panel1a-content"
               id="panel1a-header"
             >
-              <Typography sx={{ width: "40%", flexShrink: 0 }}>
-                Workout Name
+              <Typography sx={{ width: "45%", flexShrink: 0 }}>
+                Workout 
               </Typography>
               <Typography
-                sx={{ color: "text.secondary", width: "40%", flexShrink: 0 }}
+                sx={{ color: "text.secondary", width: "35%", flexShrink: 0 }}
               >
-                Workout Type
+                Target Muscle
               </Typography>
               <Typography
-                sx={{ color: "text.secondary", width: "33%", flexShrink: 0 }}
+                sx={{ color: "text.secondary", width: "20%", flexShrink: 0 }}
               >
                 Duration
               </Typography>
             </AccordionSummary>
           </Accordion>
-          <Accordion>
-            <AccordionSummary
-              aria-controls="panel2a-content"
-              id="panel2a-header"
-              fullWidth
-            >
-              <Typography sx={{ fontSize: 15, width: "40%", flexShrink: 0 }}>
-                Workout 1
-              </Typography>
-              <Typography
-                sx={{
-                  fontSize: 15,
-                  color: "text.secondary",
-                  width: "40%",
-                  flexShrink: 0
-                }}
-              >
-                Back
-              </Typography>
-              <Typography
-                sx={{
-                  fontSize: 15,
-                  color: "text.secondary",
-                  width: "33%",
-                  flexShrink: 0
-                }}
-              >
-                45 Mins
-              </Typography>
-            </AccordionSummary>
-            <AccordionDetails>
-              <Typography sx={{ fontSize: 14 }}>Sets: 3 Reps: 5</Typography>
-              <Button size="small">Start Workout</Button>
-              <Divider />
-              <Table>
-                <TableHead>
-                  <TableRow>
-                    <TableCell>Exercise</TableCell>
-                    <TableCell>Target Muscle</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {this.state.wArray.map((s, index) => (
-                    <TableRow key={s.exercise}>
-                      <TableCell>{s.exercise}</TableCell>
-                      <TableCell>{s.targetarea}</TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </AccordionDetails>
-          </Accordion>
-          <Accordion>
-            <AccordionSummary
-              aria-controls="panel2a-content"
-              id="panel2a-header"
-            >
-              <Typography sx={{ fontSize: 15, width: "40%", flexShrink: 0 }}>
-                Workout 2
-              </Typography>
-              <Typography
-                sx={{
-                  fontSize: 15,
-                  color: "text.secondary",
-                  width: "40%",
-                  flexShrink: 0
-                }}
-              >
-                Shoulders
-              </Typography>
-              <Typography
-                sx={{
-                  fontSize: 15,
-                  color: "text.secondary",
-                  width: "33%",
-                  flexShrink: 0
-                }}
-              >
-                45 Mins
-              </Typography>
-            </AccordionSummary>
-            <AccordionDetails>
-              <Typography sx={{ fontSize: 14 }}>Sets: 3 Reps: 5</Typography>
-              <Typography sx={{ fontSize: 14 }}>Exercises:</Typography>
-              <Typography sx={{ fontSize: 14 }}>Bench Press</Typography>
-              <Typography sx={{ fontSize: 14 }}>Push Press</Typography>
-              <Typography sx={{ fontSize: 14 }}>Bent Over Row</Typography>
-            </AccordionDetails>
-          </Accordion>
-          <Accordion>
-            <AccordionSummary
-              aria-controls="panel3a-content"
-              id="panel3a-header"
-            >
-              <Typography sx={{ fontSize: 15, width: "40%", flexShrink: 0 }}>
-                Workout 3
-              </Typography>
-              <Typography
-                sx={{
-                  fontSize: 15,
-                  color: "text.secondary",
-                  width: "40%",
-                  flexShrink: 0
-                }}
-              >
-                Quads
-              </Typography>
-              <Typography
-                sx={{
-                  fontSize: 15,
-                  color: "text.secondary",
-                  width: "33%",
-                  flexShrink: 0
-                }}
-              >
-                45 Mins
-              </Typography>
-            </AccordionSummary>
-            <AccordionDetails>
-              <Typography>Sets: 3</Typography>
-              <Typography>Reps: 5</Typography>
-              <Button variant="contained" size="medium">
-                Start Workout
-              </Button>
-            </AccordionDetails>
-          </Accordion>
-          <Accordion>
-            <AccordionSummary
-              aria-controls="panel1a-content"
-              id="panel1a-header"
-              fullWidth
-            >
-              <Typography sx={{ fontSize: 15, width: "40%", flexShrink: 0 }}>
-                Workout 4
-              </Typography>
-              <Typography
-                sx={{
-                  fontSize: 15,
-                  color: "text.secondary",
-                  width: "40%",
-                  flexShrink: 0
-                }}
-              >
-                Lower Body
-              </Typography>
-              <Typography
-                sx={{
-                  fontSize: 15,
-                  color: "text.secondary",
-                  width: "33%",
-                  flexShrink: 0
-                }}
-              >
-                45 Mins
-              </Typography>
-            </AccordionSummary>
-            <AccordionDetails>
-              <Typography>Sets: 3 Reps: 5</Typography>
-              <Typography>Exercises:</Typography>
-              <Typography sx={{ fontSize: 14 }}>Bench Press</Typography>
-              <Typography sx={{ fontSize: 14 }}>Push Press</Typography>
-              <Typography sx={{ fontSize: 14 }}>Bent Over Row</Typography>
-              <Divider />
-              <Button size="small">Start Workout</Button>
-              <Typography></Typography>
-            </AccordionDetails>
-          </Accordion>
+          {this.state.workouts.filter(this.filterBySearch(this.state.search))
+          .filter(this.filterByMuscleGroup(this.state.muscleGroup)).map((workout) => (
+            < MyAccordion workout={workout} />
+          )
+            
+          )}
+
+          
+          </Grid>
+          </Grid>
         </Card>
       </div>
     );
   }
 }
 
-export default MyWorkouts;
+export default Workouts;

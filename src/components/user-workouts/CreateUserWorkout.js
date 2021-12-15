@@ -4,6 +4,7 @@ import TextField from '@mui/material/TextField';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
 import Typography from '@mui/material/Typography';
+
 import locale from 'date-fns/locale/en-IE';
 import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
@@ -13,6 +14,7 @@ import Paper from '@mui/material/Paper';
 import {FirebaseContext} from "../../config/firebase";
 import { collection, doc, addDoc, query, where, onSnapshot, deleteDoc  } from "firebase/firestore";
 import { Redirect } from 'react-router-dom';
+
 const smallModalStyle = {
   position: 'absolute',
   marginTop: 8,
@@ -55,7 +57,6 @@ class CreateUserWorkout extends React.Component
     this.setState({date: newDate})
 
     
-    this.setState({ startWorkoutOpen: !this.state.startWorkoutOpen });
   }
 
   switchStartModalState() {
@@ -139,5 +140,4 @@ class CreateUserWorkout extends React.Component
 }
 
 export default CreateUserWorkout;
-        
 

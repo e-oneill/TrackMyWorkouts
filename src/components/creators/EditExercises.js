@@ -76,8 +76,6 @@ class EditExercises extends React.Component
         this.setState({exercises: exercises})
       // }
     });
-
-    
   }
 
   handleChangePage(event, newPage) {

@@ -81,7 +81,11 @@ class Login extends React.Component{
   handleModalStateChange() {
     
     this.setState({open: !this.state.open})
-    this.props.closeMenu();
+    if (!this.props.buttonFlag)
+    {
+      this.props.closeMenu();
+    }
+    
   }
 
   handlePasswordChange(e) {
@@ -133,10 +137,20 @@ class Login extends React.Component{
     // const signUpHandler = this.props.appSignUpHandler;
     return (
       <div style={{display:'grid', justifyContent:'center'}}>
-        <MenuItem onClick={() => {this.openModal(); }}>Log In</MenuItem>
-      {/* <Button variant="contained" color="success" sx={{margin: 1}} onClick={this.handleModalStateChange}> */}
-        {/* Log In
-      </Button> */}
+        {(this.props.buttonFlag) ? 
+        <Button 
+        variant="contained" 
+        fullWidth
+        color="success" 
+        sx={{margin: 1, width: '7em'}} 
+        onClick={() => {this.openModal(); }}> 
+        Log In
+        </Button>
+      : 
+      <MenuItem onClick={() => {this.openModal(); }}>Log In</MenuItem>
+        }
+        
+      
       <Modal 
       open={this.state.open}
       onClose={this.handleModalStateChange}

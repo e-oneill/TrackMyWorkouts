@@ -11,7 +11,7 @@ import MenuItem from "@mui/material/MenuItem";
 import Modal from "@mui/material/Modal";
 import Box from "@mui/material/Box";
 import { DataGrid } from '@mui/x-data-grid';
-
+import { Redirect } from 'react-router-dom';
 import CreateExercise from "./CreateExercise";
 
 import {FirebaseContext} from "../../config/firebase";
@@ -33,6 +33,7 @@ const modalStyle = {
   border: '2px solid #000',
   boxShadow: 24,
   p: 4,
+  overflowY: 'auto'
 }
 
 const columns = [
@@ -56,7 +57,8 @@ class CreateWorkout extends React.Component
       creator: '',
       exercises: [],
       selectedExercises: [],
-      exerciseCreateOpen: false
+      exerciseCreateOpen: false,
+      redirect: false
     }
 
     this.handleTextBoxChange = this.handleTextBoxChange.bind(this);
@@ -81,6 +83,7 @@ class CreateWorkout extends React.Component
     {
       let sets = e.target.value;
       if (sets < 1) { sets = 1}
+      if (sets > 8) { sets = 8}
       this.setState({workoutSets: sets})
     }
 
@@ -129,6 +132,7 @@ class CreateWorkout extends React.Component
     })
 
     console.log("Document added to Firestore: " + docRef.id);
+    this.setState({redirect: true})
   }
 
   valuetext(value) {
@@ -168,6 +172,7 @@ class CreateWorkout extends React.Component
   render() {
     return (
       <div style={{display:'flex', marginBottom: 66, justifyContent: 'center', height: '100%'}}>
+      {(this.state.redirect) && <Redirect push to={`edit-workouts`} />}
       <Grid container spacing={1}>
         <Grid item xs={12}>
         {/* <Typography variant="h4" style={{display:'flex', justifyContent: 'center'}}>
@@ -311,7 +316,12 @@ class CreateWorkout extends React.Component
               <CreateExercise />
             </Box>
         </Modal>
-        <Button variant="contained" color="success" onClick={this.createWorkout}>
+        <Button variant="contained" color="success" 
+        disabled={(this.state.workoutName.length > 0 
+                    && this.state.muscleGroup.length > 0 
+                    && this.state.intensity.length > 0
+                    && this.state.selectedExercises.length > 0) ? false : true } 
+        onClick={this.createWorkout}>
           Create Workout
         </Button>
         </Grid>
