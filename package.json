@@ -1,7 +1,7 @@
 {
-  "name": "TrackMyWorkouts",
+  "name": "eoin-jordan-merge-fork",
   "version": "1.0.0",
-  "description": "Combined",
+  "description": "",
   "keywords": [],
   "main": "src/index.js",
   "dependencies": {

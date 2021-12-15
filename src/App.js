@@ -3,11 +3,13 @@ import React from "react";
 import AccountManagement from "./components/users/AccountManagement";
 import Home from "./components/Home";
 import Splash from "./components/Splash";
-import MyWorkouts from "./components/MyWorkouts";
+import Workouts from "./components/MyWorkouts";
+// import MyWorkouts from "./components/reports/MyWorkouts";
 import Workout from "./components/workout/Workout";
 import CreationCenter from "./components/creators/CreationCenter";
 import EditExercises from "./components/creators/EditExercises";
 import CreateWorkout from "./components/creators/CreateWorkout";
+// import CreateCustomWorkout from "./components/creators/CreateCustomWorkout";
 import CreateExercise from "./components/creators/CreateExercise";
 import EditWorkouts from "./components/creators/EditWorkouts";
 import Calendar from "./components/calendar/Calendar";
@@ -19,7 +21,7 @@ import {
   deleteUser
 } from "firebase/auth";
 import { doc, getDoc, setDoc, deleteDoc } from "firebase/firestore";
-import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import { BrowserRouter as Router, Switch, Route, Redirect } from "react-router-dom";
 
 class App extends React.Component {
   static contextType = FirebaseContext;
@@ -35,12 +37,14 @@ class App extends React.Component {
         weight: null
       },
       showLogin: false,
-      signUp: false
+      signUp: false,
+      redirect: false
     };
 
     this.loginElement = React.createRef();
     this.signUpElement = React.createRef();
     this.tabMenuElement = React.createRef();
+    this.splashLoginElement = React.createRef();
 
     this.handleLogIn = this.handleLogIn.bind(this);
     this.logOut = this.logOut.bind(this);
@@ -85,8 +89,18 @@ class App extends React.Component {
       if (docSnap.exists()) {
         const data = docSnap.data();
         //We now set State inside this response, as we need to combine the records of the user from the Auth and the DB
+        if (this.splashLoginElement.current)
+        {
+          this.splashLoginElement.current.handleSubmit();
+        }
+        if (this.loginElement.current)
+        {
         this.loginElement.current.handleSubmit();
+        }
+        if (this.tabMenuElement.current)
+        {
         this.tabMenuElement.current.handleClose();
+        }
         this.setState({
           showLogin: false,
           user: {
@@ -176,7 +190,7 @@ class App extends React.Component {
           height: height
         }
       });
-      console.log(this.state.user);
+      // console.log(this.state.user);
     });
   }
 
@@ -221,7 +235,8 @@ class App extends React.Component {
         uuid: null,
         name: null,
         userEmail: null
-      }
+      },
+      redirect: true
     });
   }
 
@@ -232,6 +247,7 @@ class App extends React.Component {
   render() {
     return (
       <Router>
+        
         <AppTabBar
           ref={this.tabMenuElement}
           user={this.state.user}
@@ -250,8 +266,10 @@ class App extends React.Component {
         <Switch>
           {this.state.user.uuid ? (
             <React.Fragment>
+              {/* <Route path="/create-custom-workout" component={() => <CreateCustomWorkout />} /> */}
               <Route path="/account-management" component={() => ( <AccountManagement user={this.state.user} deleteHandler={this.deleteUser} updateUserDetails={this.updateUserDetails}/>)}/>
-              <Route path="/myworkouts" component={() => <MyWorkouts user={this.state.user} />} />
+              {/* <Route path="/my-workouts" component={() => <MyWorkouts />} /> */}
+              <Route path="/browse-workouts" component={() => <Workouts user={this.state.user} />} />
               <Route path="/creation-center" component={() => <CreationCenter />} />
               <Route path="/edit-exercises" component={() => <EditExercises />} />
               <Route path="/edit-workouts" component={() => <EditWorkouts />} />
@@ -259,17 +277,21 @@ class App extends React.Component {
               <Route path="/create-exercise" component={() => <CreateExercise />} />
               <Route path="/my-calendar" component={() => <Calendar />} />
               <Route path={`/workout/:userWorkoutId`} component={() => <Workout user={this.state.user} />}/>
+              {/* <Route exact path="/home" component={() => <Home user={this.state.user} />}/> */}
               <Route exact path="/" component={() => <Home user={this.state.user} />}/>
             </React.Fragment>
           ) : (
             <React.Fragment>
-              <Route exact path="" component={() => <Splash />} />
+              <Route exact path="" component={() => <Splash loginRef={this.splashLoginElement} appLoginHandler={this.handleLogIn} appSignUpHandler={this.showSignUp} signUpSubmit={this.handleSignUp} signUpRef={this.signUpElement} signUpOpen={this.state.signUp} />} />
             </React.Fragment>
           )}
         </Switch>
+        {/* {(this.state.redirect) && <Redirect push to={`/home`} />} */}
       </Router>
     );
   }
 }
 
 export default App;
+
+             

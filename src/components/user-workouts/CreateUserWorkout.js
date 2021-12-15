@@ -4,15 +4,15 @@ import TextField from '@mui/material/TextField';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
 import Typography from '@mui/material/Typography';
-import Grid from '@mui/material/Grid';
 import locale from 'date-fns/locale/en-IE';
+import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
 import Paper from '@mui/material/Paper';
 import {FirebaseContext} from "../../config/firebase";
 import { collection, doc, addDoc, query, where, onSnapshot, deleteDoc  } from "firebase/firestore";
-
+import { Redirect } from 'react-router-dom';
 const smallModalStyle = {
   position: 'absolute',
   marginTop: 8,
@@ -36,11 +36,15 @@ class CreateUserWorkout extends React.Component
   constructor(props)
   {
     super(props);
-    this.state = {
-      date : new Date()
-    }
-
     
+    let date = new Date();
+    let dateString = "";
+    dateString = date.getFullYear() + " " +  (date.getMonth()+1) + " " + date.getDate();
+    this.state = {
+      date : date,
+      dateString: dateString
+    }
+    console.log(date + " " + dateString);
     this.handleChange = this.handleChange.bind(this);
     this.scheduleWorkout = this.scheduleWorkout.bind(this);
     this.switchStartModalState = this.switchStartModalState.bind(this);
@@ -51,6 +55,7 @@ class CreateUserWorkout extends React.Component
     this.setState({date: newDate})
 
     
+    this.setState({ startWorkoutOpen: !this.state.startWorkoutOpen });
   }
 
   switchStartModalState() {
@@ -61,7 +66,7 @@ class CreateUserWorkout extends React.Component
     const exercises = this.props.workout.exercises
     const workoutRef = doc(this.context.database, "workouts", this.props.workout.id);
     const userRef = doc(this.context.database, "users", this.context.user.uid)
-
+    
     exercises.forEach(exercise => {
       const sets = [];
       for (let i = 0; i < this.props.workout.sets; i++)
@@ -81,6 +86,7 @@ class CreateUserWorkout extends React.Component
     const userWorkout = await addDoc(collection(this.context.database, "user-workouts"), {
       completed: false,
       date: this.state.date,
+      dateString: this.state.dateString,
       exercises: exercises,
       user: userRef,
       workout: workoutRef
@@ -133,3 +139,5 @@ class CreateUserWorkout extends React.Component
 }
 
 export default CreateUserWorkout;
+        
+
