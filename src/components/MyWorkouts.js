@@ -29,7 +29,7 @@ const inputStyle = {
   width: "50vw"
 };
 
-class MyWorkouts extends React.Component {
+class Workouts extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -277,4 +277,4 @@ class MyWorkouts extends React.Component {
   }
 }
 
-export default MyWorkouts;
+export default Workouts;

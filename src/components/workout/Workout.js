@@ -5,8 +5,26 @@ import {
 import {FirebaseContext} from "../../config/firebase";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import WorkoutCard from "./WorkoutCard";
+import RestTimer from './RestTimer';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
+import Modal from '@mui/material/Modal';
+import Box from '@mui/material/Box';
+import Paper from '@mui/material/Paper';
+
+const timerBox = {
+  position: 'absolute',
+  marginTop: 8,
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: 150,
+  bgcolor: 'background.paper',
+  // border: '2px solid #000',
+  boxShadow: 24,
+  padding: 4,
+  // overflow: 'scroll',
+}
 
 //This component is a functional component so we can access the useParams() funciton with React-Router-Dom
 export default function Workout(props) {
@@ -18,6 +36,9 @@ export default function Workout(props) {
     const [currSet, setCurrSet] = useState(1);
     const [currExercise, setCurrExercise] = useState(0);
     const [exercise, setExercise] = useState("");
+    const [timer, setTimer] = useState(false);
+
+
     // let loadCompleted = false;
     let loadInProgress = useRef(false);
     // let exercisesLookup = false;
@@ -81,7 +102,7 @@ export default function Workout(props) {
 
         // console.log(docRef);
       }
-      // console.log(newExercisesArr);
+      console.log(newExercisesArr);
       setExercisesArr(newExercisesArr);
       setExercise(newExercisesArr[currExercise].name);
       
@@ -113,7 +134,10 @@ export default function Workout(props) {
 
       userWorkout.exercises[exerciseIndex].sets[set - 1].weight = details.weight;
       userWorkout.exercises[exerciseIndex].sets[set - 1].reps = details.reps;
-      
+      let newExercisesArr = exercisesArr
+      newExercisesArr[exerciseIndex].weight = details.weight;
+      setExercisesArr(newExercisesArr);
+      // console.log(exercisesArr)
       if (currSet + 1 <= workout.sets)
       {
         setCurrSet(currSet + 1)
@@ -131,6 +155,8 @@ export default function Workout(props) {
         setExercise(exercisesArr[currExercise+1].name)
         setCurrSet(1)
       }
+
+      setTimer(true)
       // console.log(currSet, currExercise, exercise)
     }
 
@@ -141,6 +167,9 @@ export default function Workout(props) {
       updateDoc(userWorkoutRef, userWorkout)
     }
     
+    function startTimer() {
+      setTimer(!timer)
+    }
     
     return(
       <div style={{display: 'flex', justifyContent: 'center', marginBottom: '70px'}}>
@@ -161,7 +190,18 @@ export default function Workout(props) {
             </Button>
           }
           
-          
+          <Modal
+          open={timer}
+          onClose={startTimer}
+          aria-labelledby="modal-modal-title"
+          aria-describedby="modal-modal-description">
+          <Box style={timerBox}>
+            <Paper>
+              {/* <Typography>Timer</Typography> */}
+              <RestTimer duration={60}  startTimer={startTimer}/>
+            </Paper>
+          </Box>
+        </Modal>  
         </div> :
         <div>
           Loading workout...

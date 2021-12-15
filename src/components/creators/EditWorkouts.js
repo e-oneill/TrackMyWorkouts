@@ -35,6 +35,8 @@ const modalStyle = {
   // border: '2px solid #000',
   boxShadow: 24,
   padding: 4,
+  overflow: 'scroll',
+  // overflowY: 'auto'
 }
 
 
@@ -111,10 +113,14 @@ class EditWorkouts extends React.Component
                 <TableCell>
                 <Typography style={tableHead}>Sets</Typography>
                 </TableCell>
+                { (!this.props.selectorList) &&
+                <React.Fragment>
                 <TableCell>
                 </TableCell>
                 <TableCell>
                 </TableCell>
+                </React.Fragment>
+                }
               </TableRow>
             </TableHead>
             <TableBody>
@@ -123,6 +129,8 @@ class EditWorkouts extends React.Component
                   <TableCell>{row.name}</TableCell>
                   <TableCell>{row.targetMuscleGroup}</TableCell>
                   <TableCell>{row.sets}</TableCell>
+                  { (!this.props.selectorList) &&
+                  <React.Fragment>
                   <TableCell>
                     <EditWorkout workout={row} />
                   </TableCell>
@@ -130,6 +138,8 @@ class EditWorkouts extends React.Component
                           < CreateUserWorkout workout={row} modalStateChanger={this.switchStartModalState}/>
 
                   </TableCell>
+                  </React.Fragment>
+                  }
                 </TableRow>
               ))
               
