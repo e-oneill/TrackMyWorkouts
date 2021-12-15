@@ -1,10 +1,20 @@
 import * as React from "react";
 import { Paper } from "@material-ui/core";
 
-export default function workoutInfo() {
+export default function WorkoutInfo() {
   return (
-    <div className="workoutInfo">
-      <Paper>Workout Info</Paper>
+    //Conditional Rendering
+
+    // if (this.state)
+
+    <div>
+      <div className="WorkoutInfo">
+        <Paper> Workout Booked:</Paper>
+      </div>
+
+      <div className="noWorkoutInfo">
+        <Paper> No Workouts Booked</Paper>
+      </div>
     </div>
   );
 }

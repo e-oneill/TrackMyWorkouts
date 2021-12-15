@@ -140,3 +140,4 @@ class CreateUserWorkout extends React.Component
 }
 
 export default CreateUserWorkout;
+

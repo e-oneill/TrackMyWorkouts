@@ -4,12 +4,16 @@ import AccountManagement from "./components/users/AccountManagement";
 import Home from "./components/Home";
 import Splash from "./components/Splash";
 import Workouts from "./components/MyWorkouts";
+
 import MyWorkouts from "./components/reports/MyWorkouts";
+
 import Workout from "./components/workout/Workout";
 import CreationCenter from "./components/creators/CreationCenter";
 import EditExercises from "./components/creators/EditExercises";
 import CreateWorkout from "./components/creators/CreateWorkout";
+
 import CreateCustomWorkout from "./components/creators/CreateCustomWorkout";
+
 import CreateExercise from "./components/creators/CreateExercise";
 import EditWorkouts from "./components/creators/EditWorkouts";
 import Calendar from "./components/calendar/Calendar";
@@ -266,9 +270,11 @@ class App extends React.Component {
         <Switch>
           {this.state.user.uuid ? (
             <React.Fragment>
+
               <Route path="/create-custom-workout" component={() => <CreateCustomWorkout />} />
               <Route path="/account-management" component={() => ( <AccountManagement user={this.state.user} deleteHandler={this.deleteUser} updateUserDetails={this.updateUserDetails}/>)}/>
               <Route path="/my-workouts" component={() => <MyWorkouts />} />
+
               <Route path="/browse-workouts" component={() => <Workouts user={this.state.user} />} />
               <Route path="/creation-center" component={() => <CreationCenter />} />
               <Route path="/edit-exercises" component={() => <EditExercises />} />
@@ -293,3 +299,5 @@ class App extends React.Component {
 }
 
 export default App;
+
+             
