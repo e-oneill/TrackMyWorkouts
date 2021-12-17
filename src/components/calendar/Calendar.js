@@ -130,13 +130,17 @@ class Calendar extends React.Component {
       where("dateString", "==", this.state.dateString)
     );
     // this.setState({userWorkouts: []})
+
+    // This first database call produces a list of the userWorkouts that the currnelt logged in user has
+    // The query is conditional on userRef and the dataString, which is the current day stringified to allow it to be compared to Firebase's date 
+    // (Firebase uses a different timestamp format to JS, so the two are not directly comparable)
     const unsubscribe2 = onSnapshot(q2,  (querySnapshot) => {
       const userWorkouts = [];
       // console.log(querySnapshot);
       querySnapshot.forEach( async (doc) => {
         let data = doc.data();
         data.id = doc.id;
-        
+        // This step is a JOIN done through Firebase, as Firebase is not a relational database, JOINs are nested inside database calls.
         // const workoutRef = doc(this.context.database, "workouts", data.workout)
         const workoutSnap = await getDoc(data.workout)
         const workout = workoutSnap.data();
@@ -179,6 +183,7 @@ class Calendar extends React.Component {
   async scheduleWorkout() {
     // console.log(this.state.workout)
     const workout = this.state.workouts[this.state.workout];
+    // When scheduling a workout, we need to manipulate the exercises item, as it has a slightly different shape on userWorkouts than it does on Workouts
     const exercises = workout.exercises;
     const workoutRef = doc(this.context.database, "workouts", workout.id);
     // console.log(workoutRef)

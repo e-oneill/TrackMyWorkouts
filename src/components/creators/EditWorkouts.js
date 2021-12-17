@@ -43,6 +43,8 @@ const modalStyle = {
 
 class EditWorkouts extends React.Component
 {
+  // This component produces a table of the workout templates
+  // There are buttons to edit a workout, which opens an edit workout component
   static contextType = FirebaseContext;
   constructor(props) {
     super(props)
